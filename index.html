@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💰 Finanzas de Chloe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .balance-amount {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .stat-box h3 {
+            font-size: 0.8em;
+            color: #666;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .stat-box .value {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .income-color { color: #10b981; }
+        .expense-color { color: #ef4444; }
+        .neutral-color { color: #667eea; }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .type-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .type-btn {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .type-btn.active-income {
+            background: #10b981;
+            color: white;
+        }
+
+        .type-btn.active-expense {
+            background: #ef4444;
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .btn-add {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-add:hover {
+            background: #5568d3;
+        }
+
+        .transaction {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .transaction:hover {
+            background: #f9f9f9;
+        }
+
+        .transaction-info {
+            flex: 1;
+        }
+
+        .transaction-desc {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .transaction-meta {
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        .transaction-amount {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-icon {
+            font-size: 4em;
+            margin-bottom: 10px;
+        }
+
+        .chart-item {
+            margin-bottom: 15px;
+        }
+
+        .chart-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+
+        .chart-bar {
+            height: 25px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .chart-fill {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.85em;
+        }
+
+        @media (max-width: 600px) {
+            .stats { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Las Finanzas de Chloe</h1>
+            <p>Tu dinero bajo control</p>
+        </div>
+
+        <div class="balance-card">
+            <p>Balance Total</p>
+            <div class="balance-amount" id="balance">0.00€</div>
+            <p id="balanceMsg">¡Empecemos! 💪</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-box">
+                <h3>💚 Ingresos</h3>
+                <div class="value income-color" id="totalIncome">0.00€</div>
+            </div>
+            <div class="stat-box">
+                <h3>💸 Gastos</h3>
+                <div class="value expense-color" id="totalExpense">0.00€</div>
+            </div>
+            <div class="stat-box">
+                <h3>📊 Total</h3>
+                <div class="value neutral-color" id="totalCount">0</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>➕ Añadir Movimiento</h2>
+            
+            <div class="type-buttons">
+                <button class="type-btn active-income" id="btnIncome" onclick="setTipo('income')">
+                    💚 Ingreso
+                </button>
+                <button class="type-btn" id="btnExpense" onclick="setTipo('expense')">
+                    💸 Gasto
+                </button>
+            </div>
+
+            <div class="form-group">
+                <label>Cantidad (€)</label>
+                <input type="number" id="inputCantidad" step="0.01" min="0.01" placeholder="10.00">
+            </div>
+
+            <div class="form-group">
+                <label>Categoría</label>
+                <select id="inputCategoria">
+                    <option value="">Elige...</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Descripción</label>
+                <input type="text" id="inputDescripcion" placeholder="¿De dónde o en qué?">
+            </div>
+
+            <button class="btn-add" onclick="agregarMovimiento()">Añadir ✨</button>
+        </div>
+
+        <div class="card" id="chartCard" style="display: none;">
+            <h2>📊 ¿En qué gastas más?</h2>
+            <div id="chartDiv"></div>
+        </div>
+
+        <div class="card">
+            <h2>📜 Historial</h2>
+            <div id="listaMovimientos">
+                <div class="empty">
+                    <div class="empty-icon">📝</div>
+                    <p>No hay movimientos todavía</p>
+                    <p style="font-size: 0.9em;">¡Añade tu primero arriba!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var datos = [];
+        var tipoActual = 'income';
+        
+        var categoriasIngreso = ['Paga semanal', 'Regalo', 'Trabajo', 'Otro'];
+        var categoriasGasto = ['Caprichos', 'Comida', 'Ropa', 'Ocio', 'Ahorro', 'Otro'];
+        
+        var colores = {
+            'Paga semanal': '#8b5cf6', 'Regalo': '#ec4899', 'Trabajo': '#10b981', 'Otro': '#6366f1',
+            'Caprichos': '#f59e0b', 'Comida': '#ef4444', 'Ropa': '#06b6d4', 'Ocio': '#84cc16', 'Ahorro': '#10b981'
+        };
+
+        function cargarDatos() {
+            try {
+                var guardado = localStorage.getItem('chloe-dinero');
+                if (guardado) datos = JSON.parse(guardado);
+            } catch(e) {
+                datos = [];
+            }
+        }
+
+        function guardarDatos() {
+            try {
+                localStorage.setItem('chloe-dinero', JSON.stringify(datos));
+            } catch(e) {
+                alert('Error al guardar');
+            }
+        }
+
+        function setTipo(tipo) {
+            tipoActual = tipo;
+            var btnIn = document.getElementById('btnIncome');
+            var btnOut = document.getElementById('btnExpense');
+            
+            if (tipo === 'income') {
+                btnIn.className = 'type-btn active-income';
+                btnOut.className = 'type-btn';
+            } else {
+                btnIn.className = 'type-btn';
+                btnOut.className = 'type-btn active-expense';
+            }
+            
+            actualizarCategorias();
+        }
+
+        function actualizarCategorias() {
+            var sel = document.getElementById('inputCategoria');
+            var cats = tipoActual === 'income' ? categoriasIngreso : categoriasGasto;
+            
+            sel.innerHTML = '<option value="">Elige...</option>';
+            for (var i = 0; i < cats.length; i++) {
+                sel.innerHTML += '<option value="' + cats[i] + '">' + cats[i] + '</option>';
+            }
+        }
+
+        function agregarMovimiento() {
+            var cantidad = document.getElementById('inputCantidad').value;
+            var categoria = document.getElementById('inputCategoria').value;
+            var descripcion = document.getElementById('inputDescripcion').value;
+            
+            if (!cantidad || !categoria || !descripcion) {
+                alert('¡Rellena todos los campos! 📝');
+                return;
+            }
+            
+            var movimiento = {
+                id: new Date().getTime(),
+                tipo: tipoActual,
+                cantidad: parseFloat(cantidad),
+                categoria: categoria,
+                descripcion: descripcion,
+                fecha: new Date().toISOString()
+            };
+            
+            datos.unshift(movimiento);
+            guardarDatos();
+            mostrarTodo();
+            
+            document.getElementById('inputCantidad').value = '';
+            document.getElementById('inputCategoria').value = '';
+            document.getElementById('inputDescripcion').value = '';
+            
+            alert('¡Movimiento añadido! ✨');
+        }
+
+        function borrarMovimiento(id) {
+            if (confirm('¿Borrar?')) {
+                var nuevos = [];
+                for (var i = 0; i < datos.length; i++) {
+                    if (datos[i].id !== id) nuevos.push(datos[i]);
+                }
+                datos = nuevos;
+                guardarDatos();
+                mostrarTodo();
+            }
+        }
+
+        function mostrarEstadisticas() {
+            var ingresos = 0, gastos = 0;
+            
+            for (var i = 0; i < datos.length; i++) {
+                if (datos[i].tipo === 'income') ingresos += datos[i].cantidad;
+                else gastos += datos[i].cantidad;
+            }
+            
+            var balance = ingresos - gastos;
+            
+            document.getElementById('totalIncome').textContent = ingresos.toFixed(2) + '€';
+            document.getElementById('totalExpense').textContent = gastos.toFixed(2) + '€';
+            document.getElementById('totalCount').textContent = datos.length;
+            document.getElementById('balance').textContent = balance.toFixed(2) + '€';
+            
+            var msg = balance > 100 ? '¡Vas genial! 🎉' : balance > 0 ? '¡Bien! 👍' : balance < 0 ? '¡Cuidado! 😅' : '¡Empecemos! 💪';
+            document.getElementById('balanceMsg').textContent = msg;
+        }
+
+        function mostrarLista() {
+            var div = document.getElementById('listaMovimientos');
+            
+            if (datos.length === 0) {
+                div.innerHTML = '<div class="empty"><div class="empty-icon">📝</div><p>No hay movimientos</p></div>';
+                return;
+            }
+            
+            var html = '';
+            for (var i = 0; i < datos.length; i++) {
+                var m = datos[i];
+                var d = new Date(m.fecha);
+                var fecha = d.getDate() + '/' + (d.getMonth()+1) + ' ' + d.getHours() + ':' + ('0'+d.getMinutes()).slice(-2);
+                var signo = m.tipo === 'income' ? '+' : '-';
+                var clase = m.tipo === 'income' ? 'income-color' : 'expense-color';
+                
+                html += '<div class="transaction">' +
+                    '<div class="transaction-info">' +
+                    '<div class="transaction-desc">' + m.descripcion + '</div>' +
+                    '<div class="transaction-meta">' + m.categoria + ' • ' + fecha + '</div>' +
+                    '</div>' +
+                    '<div style="display:flex;align-items:center;">' +
+                    '<div class="transaction-amount ' + clase + '">' + signo + m.cantidad.toFixed(2) + '€</div>' +
+                    '<button class="btn-delete" onclick="borrarMovimiento(' + m.id + ')">🗑️</button>' +
+                    '</div></div>';
+            }
+            div.innerHTML = html;
+        }
+
+        function mostrarGrafico() {
+            var gastosPorCat = {};
+            
+            for (var i = 0; i < datos.length; i++) {
+                if (datos[i].tipo === 'expense') {
+                    var cat = datos[i].categoria;
+                    gastosPorCat[cat] = (gastosPorCat[cat] || 0) + datos[i].cantidad;
+                }
+            }
+            
+            var keys = Object.keys(gastosPorCat);
+            if (keys.length === 0) {
+                document.getElementById('chartCard').style.display = 'none';
+                return;
+            }
+            
+            document.getElementById('chartCard').style.display = 'block';
+            
+            var total = 0;
+            for (var k in gastosPorCat) total += gastosPorCat[k];
+            
+            var arr = [];
+            for (var k in gastosPorCat) arr.push([k, gastosPorCat[k]]);
+            arr.sort(function(a,b) { return b[1] - a[1]; });
+            
+            var html = '';
+            for (var i = 0; i < arr.length; i++) {
+                var cat = arr[i][0];
+                var cant = arr[i][1];
+                var porc = (cant / total * 100).toFixed(1);
+                var color = colores[cat] || '#6b7280';
+                
+                html += '<div class="chart-item">' +
+                    '<div class="chart-label"><span><strong>' + cat + '</strong></span>' +
+                    '<span>' + cant.toFixed(2) + '€ (' + porc + '%)</span></div>' +
+                    '<div class="chart-bar"><div class="chart-fill" style="width:' + porc + '%;background:' + color + '">' +
+                    porc + '%</div></div></div>';
+            }
+            
+            document.getElementById('chartDiv').innerHTML = html;
+        }
+
+        function mostrarTodo() {
+            mostrarEstadisticas();
+            mostrarLista();
+            mostrarGrafico();
+        }
+
+        window.onload = function() {
+            cargarDatos();
+            actualizarCategorias();
+            mostrarTodo();
+        };
+    </script>
+</body>
+</html>
